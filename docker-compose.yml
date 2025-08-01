@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: clo835-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: clo835_db
+      MYSQL_USER: clo835_user
+      MYSQL_PASSWORD: clo835_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - clo835-network
+
+  app:
+    build: .
+    container_name: clo835-app
+    ports:
+      - "81:81"
+    environment:
+      - DB_HOST=mysql
+      - DB_NAME=clo835_db
+      - DB_USER=root
+      - DB_PASSWORD=password
+      - STUDENT_NAME=Amardeep Puri
+      - BACKGROUND_IMAGE_URL=https://images.unsplash.com/photo-1557683316-973673baf926?w=800
+      - S3_BUCKET=clo835-final-project
+      - S3_IMAGE_KEY=background.jpg
+    depends_on:
+      - mysql
+    networks:
+      - clo835-network
+    volumes:
+      - ./app:/app
+      - /app/static/images
+
+volumes:
+  mysql_data:
+
+networks:
+  clo835-network:
+    driver: bridge 
