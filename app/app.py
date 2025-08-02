@@ -30,13 +30,13 @@ app = Flask(__name__)
 app.secret_key = 'your-secret-key-here'
 
 # Configuration from environment variables and ConfigMap
-BACKGROUND_IMAGE_URL = os.getenv('BACKGROUND_IMAGE_URL', 'https://example.com/default-bg.jpg')
+BACKGROUND_IMAGE_URL = os.getenv('BACKGROUND_IMAGE_URL', 'https://clo835-finalproject-group9.s3.us-east-1.amazonaws.com/background.jpg')
 STUDENT_NAME = os.getenv('STUDENT_NAME', 'Amardeep Puri')
 DB_HOST = os.getenv('DB_HOST', 'mysql-service')
 DB_NAME = os.getenv('DB_NAME', 'clo835_db')
 DB_USER = os.getenv('DB_USER', 'root')
 DB_PASSWORD = os.getenv('DB_PASSWORD', 'password')
-S3_BUCKET = os.getenv('S3_BUCKET', 'clo835-final-project')
+S3_BUCKET = os.getenv('S3_BUCKET', 'clo835-finalproject-group9')
 S3_IMAGE_KEY = os.getenv('S3_IMAGE_KEY', 'background.jpg')
 
 # Log the background image URL
@@ -86,24 +86,17 @@ def init_database():
             cursor.close()
             connection.close()
 
-def download_background_image():
-    """Download background image from S3 and save locally"""
+def get_background_image():
+    """Get background image URL - use direct S3 URL"""
     try:
-        # Create static/images directory if it doesn't exist
-        os.makedirs('static/images', exist_ok=True)
-        
-        # Download image from S3
-        s3_client = boto3.client('s3')
-        local_path = 'static/images/background.jpg'
-        
-        s3_client.download_file(S3_BUCKET, S3_IMAGE_KEY, local_path)
-        logger.info(f"Background image downloaded from S3: s3://{S3_BUCKET}/{S3_IMAGE_KEY}")
-        
-        return f"/static/images/background.jpg"
+        # Use the direct S3 URL from environment variable
+        background_url = BACKGROUND_IMAGE_URL
+        logger.info(f"Using background image URL: {background_url}")
+        return background_url
     except Exception as e:
-        logger.error(f"Error downloading background image: {e}")
+        logger.error(f"Error getting background image: {e}")
         # Fallback to default background
-        return BACKGROUND_IMAGE_URL
+        return "https://images.unsplash.com/photo-1557683316-973673baf926?w=800"
 
 @app.route('/')
 def index():
@@ -122,8 +115,8 @@ def index():
             cursor.close()
             connection.close()
     
-    # Get background image path
-    background_image = download_background_image()
+    # Get background image URL
+    background_image = get_background_image()
     
     return render_template('index.html', 
                          users=users, 
@@ -188,7 +181,7 @@ if __name__ == '__main__':
     # Initialize database
     init_database()
     
-    # Get port from environment variable or default to 81
+    # Get port from environment variable or default to 8080
     port = int(os.getenv('PORT', 8080))
     
     # Start Flask app on the specified port
