@@ -2,7 +2,7 @@ apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: flask-app-hpa
-  namespace: project
+  namespace: final
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
@@ -16,13 +16,13 @@ spec:
       name: cpu
       target:
         type: Utilization
-        averageUtilization: 70
+        averageUtilization: 20
   - type: Resource
     resource:
       name: memory
       target:
         type: Utilization
-        averageUtilization: 80
+        averageUtilization: 20
   behavior:
     scaleUp:
       stabilizationWindowSeconds: 60
@@ -35,4 +35,4 @@ spec:
       policies:
       - type: Percent
         value: 10
-        periodSeconds: 60 
+        periodSeconds: 60

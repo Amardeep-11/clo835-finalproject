@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: mysql-service
-  namespace: project
+  namespace: final
   labels:
     app: mysql
 spec:
@@ -12,4 +12,4 @@ spec:
     targetPort: 3306
     protocol: TCP
   selector:
-    app: mysql 
+    app: mysql

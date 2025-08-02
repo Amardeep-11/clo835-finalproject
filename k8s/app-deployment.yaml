@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: flask-app
-  namespace: project
+  namespace: final
   labels:
     app: flask-app
 spec:
@@ -18,9 +18,9 @@ spec:
       serviceAccountName: clo835
       containers:
       - name: flask-app
-        image: 767398074604.dkr.ecr.us-east-1.amazonaws.com/clo835-final-project:latest
+        image: 726681933704.dkr.ecr.us-east-1.amazonaws.com/clo835-finalproject:latest
         ports:
-        - containerPort: 8080
+        - containerPort: 81
         env:
         - name: PORT
           value: "81"
@@ -71,12 +71,12 @@ spec:
         livenessProbe:
           httpGet:
             path: /health
-            port: 8080
+            port: 81
           initialDelaySeconds: 30
           periodSeconds: 10
         readinessProbe:
           httpGet:
             path: /health
-            port: 8080
+            port: 81
           initialDelaySeconds: 5
-          periodSeconds: 5 
+          periodSeconds: 5
